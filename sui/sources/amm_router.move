@@ -1,4 +1,5 @@
 module cetus_amm::amm_router {
+    friend cetus_amm::amm_script;
     use cetus_amm::amm_swap::{Self, Pool, PoolLiquidityCoin, AdminCap, FlashSwapReceipt};
     use cetus_amm::amm_config::{Self, GlobalPauseStatus};
     use cetus_amm::amm_utils;
@@ -146,7 +147,7 @@ module cetus_amm::amm_router {
             reture_back_or_delete(balance_lp, ctx);
         }
 
-    public fun init_pool<CoinTypeA, CoinTypeB>(
+    public(friend) fun init_pool<CoinTypeA, CoinTypeB>(
         _: &AdminCap,
         trade_fee_numerator: u64,
         trade_fee_denominator: u64,
@@ -351,7 +352,7 @@ module cetus_amm::amm_router {
 
 
 
-    public fun set_global_pause_status(
+    public(friend) fun set_global_pause_status(
         _: &AdminCap,
         global_pause_status: &mut GlobalPauseStatus, 
         status: bool,
@@ -386,7 +387,7 @@ module cetus_amm::amm_router {
         }
     }
 
-    public fun set_fee_config<CoinTypeA, CoinTypeB>(
+    public(friend) fun set_fee_config<CoinTypeA, CoinTypeB>(
         _: &AdminCap,
         pool: &mut Pool<CoinTypeA, CoinTypeB>,
         trade_fee_numerator: u64,
@@ -408,7 +409,7 @@ module cetus_amm::amm_router {
         );
     }
 
-    public fun claim_fee<CoinTypeA, CoinTypeB>(
+    public(friend) fun claim_fee<CoinTypeA, CoinTypeB>(
         _: &AdminCap,
         pool: &mut Pool<CoinTypeA, CoinTypeB>,
         ctx: &mut TxContext
@@ -421,7 +422,7 @@ module cetus_amm::amm_router {
         ctx: &mut TxContext
     ) {
         if(balance::value(&balance) > 0) {
-            transfer::transfer(coin::from_balance(balance , ctx), tx_context::sender(ctx));
+            transfer::public_transfer(coin::from_balance(balance , ctx), tx_context::sender(ctx));
         } else {
             balance::destroy_zero(balance);
         }

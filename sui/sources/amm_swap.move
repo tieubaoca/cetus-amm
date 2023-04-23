@@ -19,9 +19,13 @@ module cetus_amm::amm_swap {
     const ELiquiditySwapBurnCalcInvalid: u64 = 3;
     const EPoolInvalid: u64 = 4;
     const EAMOUNTINCORRECT: u64 = 5;
+    const ENotPermission: u64 = 6;
 
     struct AdminCap has key {
         id: UID,
+        controller: address,
+        beneficiary: address,
+        pool_manager: address
     }
 
     struct PoolLiquidityCoin<phantom CoinTypeA, phantom CoinTypeB> has drop{}
@@ -101,7 +105,10 @@ module cetus_amm::amm_swap {
     fun init(ctx: &mut TxContext) {
         transfer::transfer(
             AdminCap{
-                id: object::new(ctx)
+                id: object::new(ctx),
+                controller: @controller,
+                beneficiary: @beneficiary,
+                pool_manager: @pool_manager
             },
             tx_context::sender(ctx)
         );
@@ -558,6 +565,18 @@ module cetus_amm::amm_swap {
         assert!(
                 amm_math::safe_compare_mul_u64(a_adjusted, b_adjusted, a_reserve * fee_denominator, b_reserve * fee_denominator), 
                 ESwapoutCalcInvalid);
+    }
+    
+    public fun assert_controller_role(admin_cap: &AdminCap, ctx: &mut TxContext) {
+        assert!(tx_context::sender(ctx) == admin_cap.controller, ENotPermission);
+    }
+
+    public fun assert_beneficiary_role(admin_cap: &AdminCap, ctx: &mut TxContext) {
+        assert!(tx_context::sender(ctx) == admin_cap.beneficiary, ENotPermission);
+    }
+
+    public fun assert_pool_manager_role(admin_cap: &AdminCap, ctx: &mut TxContext) {
+        assert!(tx_context::sender(ctx) == admin_cap.pool_manager, ENotPermission);
     }
 
 }

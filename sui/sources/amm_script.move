@@ -1,5 +1,5 @@
 module cetus_amm::amm_script {
-    use cetus_amm::amm_swap::{Pool,PoolLiquidityCoin, AdminCap};
+    use cetus_amm::amm_swap::{Self, Pool,PoolLiquidityCoin, AdminCap};
     use cetus_amm::amm_config::{GlobalPauseStatus};
     use cetus_amm::amm_router;
     use sui::coin::{Coin};
@@ -13,6 +13,7 @@ module cetus_amm::amm_script {
         protocol_fee_denominator: u64,
         ctx: &mut TxContext
     ) {
+        amm_swap::assert_pool_manager_role(admin_cap, ctx);
         amm_router::init_pool<CoinTypeA, CoinTypeB>(
             admin_cap,
             trade_fee_numerator,
@@ -143,6 +144,7 @@ module cetus_amm::amm_script {
         global_pause_status: &mut GlobalPauseStatus, 
         status: bool,
         ctx: &mut TxContext) {
+        amm_swap::assert_controller_role(admin_cap, ctx);
         amm_router::set_global_pause_status(
             admin_cap,
             global_pause_status, 
@@ -159,6 +161,7 @@ module cetus_amm::amm_script {
         protocol_fee_denominator: u64,
         ctx: &mut TxContext
     ) {
+        amm_swap::assert_pool_manager_role(admin_cap, ctx);
         amm_router::set_fee_config(
             admin_cap,
             pool,
@@ -175,6 +178,7 @@ module cetus_amm::amm_script {
         pool: &mut Pool<CoinTypeA, CoinTypeB>,
         ctx: &mut TxContext
     ) {
+        amm_swap::assert_beneficiary_role(admin_cap, ctx);
         amm_router::claim_fee(
             admin_cap,
             pool,

@@ -3,8 +3,11 @@ name = "Cetus-AMM"
 version = "0.0.1"
 
 [dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework", rev = "devnet" }
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "devnet" }
 
 [addresses]
-cetus_amm = "0xfe111eb2500241698252189ba4a6a480ab02315b"
+cetus_amm = "0x0"
 sui = "0x2"
+controller= "0x27c8eaf252cf4863f3baeef656df8197744cc9fc32435f05c6f6b6e43a724437"
+beneficiary= "0x27c8eaf252cf4863f3baeef656df8197744cc9fc32435f05c6f6b6e43a724437"
+pool_manager= "0x27c8eaf252cf4863f3baeef656df8197744cc9fc32435f05c6f6b6e43a724437"
